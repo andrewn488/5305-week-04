@@ -7,16 +7,83 @@ output:
     toc: true
     toc_depth: 3
     toc_float: true
-    number_sections: true
+    number_sections: false
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+## Overview video
+
++ Recursive, Rolling, and Fixed environments
+
+    + Keep this information in the back of my mind
+    + Won't use these schemes until week 9 of the course
+    
+
 ## Chapter 6 Lecture Videos
 
+### Moving Average Models
 
++ White Noise - error term
+    
+    + mean != 0
+    + doesn't need to have a normal distribution
+    + just needs to be stationary with AC=0 and PC=0 
+    + Autocorrelation == 0
+    + Partial Correlation == 0
+    
++ Trend or Seasonality
+
+    + Wolt Theorem
+        + for any stationary process, we can use a linear model to process it to be stationary
+        + this is our starting point
+    + stationary TS
+  
++ White Noise in the real world
+
+    + Constant mean, somewhere ~ 0 and frequently returns to its mean
+    + no spikes -- all close to 0
+    + difficult to predict individual stock price because of white noise
+        + usually returns to 0 at some point
+
++ Moving average process
+
+    + Constant mean and stationary, very similar to white noise
+    + MA is a little more sticky
+        + when it's up, it's stays up. when it's down it stays down
+        + but then returns back to 0 at some point
+    + MA is the model in TS: only have 1 regressor
+        + error term of past periods
+    + as theta increases, MA becomes more "sticky" 
+    + as theta incrases, MA becomes more volatile and variance increases
+    + counting the number of spikes tell us what order it's in
+    
++ MA1 process estimate and forecast (5-year Treasury Note Yield)
+
+    + White Noise or Moving Average?
+        + Graph the TS
+        + Check ACF and PACF
+            + How many spikes?
+        + If 1 spike, use MA1 model
+    + MA 1 model is very "short memory"
+    
++ Higher orders of MA process
+
+    + Have 2+ coefficients
+    + Becomes more "sticky" 
+    + MA2 process will have 2 spikes in ACF
+        + PACF will be more gradual as long as the coefficient is positive
+        + When coefficient is positive, PACF oscilates
+        + When coefficient is negative, PACF alternates 
+
++ Summary
+
+    + started the MA concepts
+    + similarity between MA concept and making estimates and forecasts
+    + MA model is **always** stationary process 
 
 ## Chapter 6 R Instructions
 
