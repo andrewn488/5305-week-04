@@ -1,0 +1,33 @@
+---
+title: "week_04_notes"
+author: "Andrew Nalundasan"
+date: "10/21/2021"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Chapter 6 Lecture Videos
+
+
+
+## Chapter 6 R Instructions
+
+
+
+## Week 4 External Videos
+
+
+
+## Week 4 Videos on my notes
+
+
+
+## Practice Problem Set Ch. 6
