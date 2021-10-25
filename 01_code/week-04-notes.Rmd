@@ -14,6 +14,12 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+# load libraries
+library(readxl)
+library(forecast)
+```
+
 
 ## Overview video
 
@@ -87,7 +93,98 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Chapter 6 R Instructions
 
+### Part I: simulate MA time series
 
+```{r}
+# simulate y1
+y1 <- arima.sim(n=200, list(ma = 0.5), innov = 0.5*rnorm(200)) + 2
+
+# plot time-series
+plot.ts(y1)
+
+```
+
+```{r}
+
+# simulate y2
+y2 <- arima.sim(n=200, list(ma = c(-1, 0.25)), innov = 0.5 * rnorm(200)) + 2
+
+# plot time-series
+plot.ts(y2)
+```
+
+```{r}
+
+par(mar = c(1, 1, 1, 1))
+
+layout(matrix(c(1, 1, 2, 2), 2, 2, byrow=TRUE))
+
+```
+
+**Comments**
+
++ the first figure occupies the first row
++ the second figure occupies the second row
+
+```{r}
+# try the follow command to see the difference
+layout(matrix(c(1,1,1,2), 2,2,byrow=TRUE))
+```
+
+
+```{r}
+plot.ts(y1)
+plot.ts(y2)
+
+dev.off()
+```
+
+### Part II: estimation 
+
+```{r}
+# load data: 5 year-treasure yield
+
+data <- read_excel("../02_raw_data/Figure6_5_Table6_1_treasury.xls")
+
+dy <- ts(data$DY, frequency = 12, start = c(1953, 4))
+
+plot(dy)
+```
+
+```{r}
+# use 'forecast' package
+
+# get the data
+dysub <- data$DY[1:656]
+
+# make into TS
+dysub <- ts(dysub, frequency = 12, start = c(1953, 4))
+
+# get summary  
+summary(dysub)
+
+# make model
+model <- arima(dysub, order=c(0,0,1))
+
+# get summary
+summary(model)
+```
+
+
+### Part III:forecasting
+
+
+```{r}
+# make forecasts
+fcasts <- forecast(model, h = 5)
+
+# get summary
+summary(fcasts)
+
+# plot forecast and color lines red
+plot(fcasts, include = 10)
+lines(dy, col="red")
+```
 
 ## Week 4 External Videos
 
