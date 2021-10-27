@@ -95,8 +95,14 @@ library(forecast)
 
 ### Part I: simulate MA time series
 
++ MA1 vs. MA2
+
 ```{r}
 # simulate y1
+# MA1
+# generate 200 observations
+# because MA1, only need 1 regressor
+# innovation has normal distribution with mean=0, stdev=0.5, unconditional mean=2
 y1 <- arima.sim(n=200, list(ma = 0.5), innov = 0.5*rnorm(200)) + 2
 
 # plot time-series
@@ -107,37 +113,39 @@ plot.ts(y1)
 ```{r}
 
 # simulate y2
+# MA2 so need to provide 2 coefficients
+# first regressor: epsilon_t-1=-1, second regressor: epsilon_t-2=0.25
 y2 <- arima.sim(n=200, list(ma = c(-1, 0.25)), innov = 0.5 * rnorm(200)) + 2
 
 # plot time-series
 plot.ts(y2)
 ```
 
-```{r}
 
-par(mar = c(1, 1, 1, 1))
+
+
+
+```{r}
+# this doesn't work well in markdown view.
+# this renders differently in console while running from top to bottom
+# par(mar = c(1, 1, 1, 1))
 
 layout(matrix(c(1, 1, 2, 2), 2, 2, byrow=TRUE))
+layout(matrix(c(1, 1, 1, 2), 2, 2, byrow=TRUE))
 
+plot.ts(y1)
+plot.ts(y2)
+
+# this command clears out the console pane 
+# dev.off()
 ```
 
 **Comments**
 
++ MA2 seems to return to 0 more often than MA1
 + the first figure occupies the first row
 + the second figure occupies the second row
 
-```{r}
-# try the follow command to see the difference
-layout(matrix(c(1,1,1,2), 2,2,byrow=TRUE))
-```
-
-
-```{r}
-plot.ts(y1)
-plot.ts(y2)
-
-dev.off()
-```
 
 ### Part II: estimation 
 
@@ -151,10 +159,15 @@ dy <- ts(data$DY, frequency = 12, start = c(1953, 4))
 plot(dy)
 ```
 
+**Comments**
+
++ could be MA1 or MA2, we don't know
+
+
 ```{r}
 # use 'forecast' package
 
-# get the data
+# get subset of the data and make it the estimation data
 dysub <- data$DY[1:656]
 
 # make into TS
@@ -164,7 +177,11 @@ dysub <- ts(dysub, frequency = 12, start = c(1953, 4))
 summary(dysub)
 
 # make model
-model <- arima(dysub, order=c(0,0,1))
+# order:
+    # 0 = AR model
+    # 0 = Order of difference
+    # 1 = order of the moving average
+model <- arima(dysub, order=c(0, 0, 1))
 
 # get summary
 summary(model)
@@ -176,6 +193,9 @@ summary(model)
 
 ```{r}
 # make forecasts
+# h is the forecasting horizon
+    # from 1 step ahead, 2 steps ahead..., 5 steps ahead
+    # this returns 5 forecasts for us
 fcasts <- forecast(model, h = 5)
 
 # get summary
@@ -186,12 +206,100 @@ plot(fcasts, include = 10)
 lines(dy, col="red")
 ```
 
+**Comments**
+
++ dark bands - interval bands
++ dark grey - 95% confidence interval
++ light grey - 80% of confidence interval
++ compare blue line (forecast) vs. red line (original) 
+
+### Summary
+
++ Using R to simulate MA TS models
++ How to estimate and forecast TS using MA model
+
 ## Week 4 External Videos
 
-
+Notes in OneNote
 
 ## Week 4 Videos on my notes
 
+1. White Noise process
+
++ if every random variable in the process has mean == 0
++ and covariance == 0 between any random variable
++ --> then it's white noise
++ for such a process to be stationary:
+
+    1. E(Xt) == 0
+    2. var(Xt) = E(Xt**2) = sigma**2 < infinity
+    3. R(tau) = cov(Xt, Xs) = {sigma**2: tau=0, 0: tau!=0}
+    
+2. Wold Decomposition Theorem
+
++ gives us the justification for autoregressive moving average model (ARMA) 
+
+    + Any stationary process {Xt} can be expressed as Xt = dt + vt
+        + dt <- perfectly predictable process
+            1.dt can be perfectly predicted by its own past
+                + dt = E[dt | dt-1, dt-2, dt-3, ...]
+        + vt <- white noise
+            1. vt has the one-side linear representation
+                + vt = sum(white noise processes)
+                
++ An ARMA is a discrete process {Xt} such that Ap(L) Xt = Gq(L) Et with Et ~ iid (0, sigma**2)
+
+    + This is a demeaned version of ARMA process
+
+                
+3. MA Process aka ARMA(0, q=1)
+
++ ARMA(p, q)
+
+    + (1 - A1L - A2L**2...ApL**p) Xt = (1 + b1L + b2L**2 ... + bqL**q) Epsilon_t
+    
++ A moving process of order q >= 0, MA(q) has the following formula:
+
+    + Yt = mu + b1 * Epsilon_t-1 + b2 * Epsilon_t-2 +...+ bq * Epsilon_t-q
 
 
-## Practice Problem Set Ch. 6
+4. MA(1) Process
+
++ demeaned version
+
++ Properties: 
+
+    + stationary process
+    1. Mean == 0
+    2. Variance (sigma**2) == 
+    3. Covariance == 0
+    4. Correlation Coefficient (rho) == 
+
+5. Invertibility
+
++ A process {Xt} (MA process) is invertible if it can be expressed as an infinite order of AutoRegressive process
++ for MA(1) process Xt = Epsilon_t + theta * Epsilon_t-1 to be invertible abs(theta) < 1
+    
+    + if theta is < 1, then it's invertible
+
+
+6. Optimal Forecasting of MA(1) Process 
+
+(1) 1-step ahead optimal forecast
+(2) 1-step ahead optimal forecast error
+(3) Calculate variance of error
+(4) Density forecast
+
+
+7. MA(q) Process
+
+Read PDF notes
+
+
+8. MA(infinity)
+
+Read PDF notes
+
+9. MA(q) Forecasting
+
+Read PDF notes
